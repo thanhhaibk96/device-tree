@@ -20,7 +20,8 @@
 			phandle = <0x12c>;
 			linux,phandle = <0x12c>;
 			clock-accuracy = <0x64>;
-			clock-frequency = <0xf42400>;
+			//clock-frequency = <0xf42400>; // 16MHz
+			clock-frequency = <0x7a1200>; // 8MHz
 			#clock-cells = <0x0>;
 			compatible = "fixed-clock";
 		};
@@ -1476,13 +1477,13 @@
 			pin31 {
 				nvidia,enable-input = <0x1>;
 				nvidia,tristate = <0x0>;
-				nvidia,pull = <0x0>;
+				nvidia,pull = <0x2>;
 				nvidia,pins = "pz0";
 				nvidia,function = "rsvd1";
 			};
 
 			pin26 {
-				nvidia,enable-input = <0x1>;
+				nvidia,enable-input = <0x0>;
 				nvidia,tristate = <0x0>;
 				nvidia,pull = <0x2>;
 				nvidia,pins = "spi1_cs1_pc4";
@@ -3117,6 +3118,19 @@
 		linux,phandle = <0x56>;
 		phandle = <0x56>;
 
+		mcp2515_int:mcp2515_int {
+            gpio-hog;
+            input;
+            gpios = <0xc8 0>;
+            label = "mcp2515_int";
+        };
+
+		/*spi_enable {
+            gpio-hog;
+            function;
+            gpios = <0x10 0x0 0x11 0x0 0x12 0x0 0x13 00 0x14 0x0>;
+         };*/
+
 		camera-control-output-low {
 			gpio-hog;
 			output-low;
@@ -3149,6 +3163,7 @@
 			gpio-input = <0x5 0xbc 0xbd 0xbe 0xc1 0xa9 0xca 0x3a 0x3d 0x3e 0x41 0xe4>;
 			gpio-output-low = <0x97 0x98 0xcb 0x38 0x3b 0x3c 0x3f 0x40 0x42>;
 			gpio-output-high = <0x6 0xbb 0xe7>;
+			gpio-to-sfio = <16 17 18 19 20>; // J41 Header SPI1
 			linux,phandle = <0x3c>;
 			phandle = <0x3c>;
 		};
@@ -3715,14 +3730,17 @@
 		spi@0 {
 			//interrupt-parent = <0x56>;
 			//interrupts = <0xc8 0x1>;
-			interrupts = <0x56 0x14 0x2>;
+			pinctrl-names = "default";
+            pinctrl-0 = <&mcp2515_int>;
+			interrupts = <0x56 0xc8 0x2>;
 			clocks = <0x12c>;
 			nvidia,rx-clk-tap-delay = <0x6>;
 			nvidia,enable-hw-based-cs;
 			compatible = "microchip,mcp2515";
 			reg = <0x0>;
-			spi-max-frequency = <0x989680>;
-
+			spi-max-frequency = <0x989680>; // 10MHz
+			//spi-max-frequency = <0x1312d00>; // 20MHz
+			
 			controller-data {
 				nvidia,tx-clk-tap-delay = <0x0>;
 				nvidia,cs-hold-clk-count = <0x1e>;
